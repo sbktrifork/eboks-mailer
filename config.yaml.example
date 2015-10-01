@@ -1,6 +1,6 @@
-cpr:            1234567890
-password:       password
-activation:     activation
-to:             user@host
-from:           "%s" <no-reply-eboks@host>
-server:         localhost
+cpr:            "1234567890"
+password:       "password"
+activation:     "activation"
+to:             "user@host"
+from:           "\"%s\" <no-reply-eboks@host>"
+server:         "localhost"
