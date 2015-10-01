@@ -10,24 +10,26 @@ Usage:
 
 You need to configure this with your CPR#, password and activation key.
 
-Requirements:
+Python requirements:
 
 - requests
+- yaml
 - BeautifulSoup (bs4)
 
 Integration with Sieve filters
 ------------------------------
-
-An example usage with Dovecot
-
 
 Example sieve filter:
 
     require ["vnd.dovecot.execute"];
 
     if address :matches "From" "besked@advisering.e-boks.dk" {
-        execute "eboks-mailer-trigger /path/to/config.yaml";
+        execute "eboks-mailer-trigger" "/path/to/config.yaml";
         stop;
     }
 
+Where `eboks-mailer-trigger` is a script in `/usr/lib/dovecot/sieve-execute`
+
+    #!/bin/sh
+    nohup /opt/eboks-mailer/eboks-mailer.py $1 &
 
