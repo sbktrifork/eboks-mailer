@@ -122,3 +122,4 @@ for msg in msgs.select("li"):
 
         server = smtplib.SMTP(config["server"])
         server.sendmail(config["from"] % sender, config["to"], msg.as_string())
+        
