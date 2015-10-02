@@ -2,30 +2,26 @@
 
 # -*- coding: utf-8 -*-
 
-import string
-import re
-import unicodedata
+
 import mimetypes 
+import re
 import smtplib
 import sys
-import yaml
+import unicodedata
 
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email import Encoders
 
 import requests
+import yaml
 from bs4 import BeautifulSoup
 
 def slugify(text):
     text = unicodedata.normalize('NFKD', text).lower()
     return re.sub(r'\W+', '_', text)
 
-
 config = yaml.load(file(sys.argv[1], "r").read())
-
-EMAIL_TO = config["to"]
-EMAIL_FROM = config["from"]
 
 LOGIN_URL = "https://m.e-boks.dk/logon.aspx"
 INBOX_URL = "https://m.e-boks.dk/inbox.aspx"
@@ -64,6 +60,7 @@ r.raise_for_status()
 
 if "notification warning" in r.content:
     print "[-] Login FAILED"
+    exit(1)
 
 print "[+] Login OK"
 
