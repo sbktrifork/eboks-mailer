@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 # -*- coding: utf-8 -*-
+import imp
 import mimetypes 
+import os
 import re
+import string
 import sys
 import unicodedata
-import imp
-import string
 
 import requests
 import yaml
@@ -42,7 +43,9 @@ if set(backend_name) > allowed:
     print "Invalid backend name"
     exit(3)
 
-backend_ns = imp.load_source(backend_name, "backends/%s.py" % backend_name)
+# load backend
+backend_filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), "backends", "%s.py" % backend_name)
+backend_ns = imp.load_source(backend_name, backend_filename)
 backend = backend_ns.Backend(config)
 
 print "[*] Using backend:", backend_name
