@@ -95,7 +95,7 @@ for msg in msgs.select("li"):
     
     unread = len(msg.select(".item_unread")) == 1
 
-    if True or unread:
+    if unread:
 
         msgid = msg.a["href"].split("'")[1]
         date = msg.select("span.recieved")[0].text
