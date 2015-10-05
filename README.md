@@ -13,6 +13,10 @@ Usage:
 
 You need to configure this with your CPR#, password and activation key.
 
+You get the password and activation key from the e-Boks website.
+There is a [video-guide](http://www.e-boks.dk/help.aspx?pageid=db5a89a1-8530-418a-90e9-ff7f0713784a) 
+on how to get it (in Danish).
+
 Python requirements:
 
 - requests
