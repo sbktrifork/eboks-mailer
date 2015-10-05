@@ -1,0 +1,5 @@
+cpr:            "1234567890"
+password:       "password"
+activation:     "activation"
+path:           "/tmp/eboks"
+backend:        "filesystem"

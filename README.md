@@ -1,8 +1,11 @@
 e-Boks mailer
 =============
 
-Fetch unread "e-Boks" messages and mail them to yourself. 
+Fetch unread "e-Boks" messages and mail* them to yourself. 
 Useful in a closed ecosystem, where you control your own mail server.
+
+*) or save them to disk. Actually, with the modular backends you can 
+define your own place to process and store the files.
 
 Usage:
 
