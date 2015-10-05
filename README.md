@@ -36,8 +36,8 @@ Where `eboks-mailer-trigger` is a script in `/usr/lib/dovecot/sieve-execute`
 
 And the master system config is something like (in `/etc/dovecot/dovecot.conf`)
 
-	plugin {
-	  sieve_plugins = sieve_extprograms
-	  sieve_extensions = +vnd.dovecot.execute
-	  sieve_execute_bin_dir = /usr/lib/dovecot/sieve-execute
-	}
+    plugin {
+      sieve_plugins = sieve_extprograms
+      sieve_extensions = +vnd.dovecot.execute
+      sieve_execute_bin_dir = /usr/lib/dovecot/sieve-execute
+    }

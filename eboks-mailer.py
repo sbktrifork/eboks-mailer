@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 
 # -*- coding: utf-8 -*-
-
-
 import mimetypes 
 import re
-import smtplib
 import sys
 import unicodedata
-
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEBase import MIMEBase
-from email import Encoders
+import imp
+import string
 
 import requests
 import yaml
@@ -21,15 +16,38 @@ def slugify(text):
     text = unicodedata.normalize('NFKD', text).lower()
     return re.sub(r'\W+', '_', text)
 
-config = yaml.load(file(sys.argv[1], "r").read())
-
+# static strings
 LOGIN_URL = "https://m.e-boks.dk/logon.aspx"
 INBOX_URL = "https://m.e-boks.dk/inbox.aspx"
 DOC_URL = "https://m.e-boks.dk/inbox_document.aspx"
 DOCVIEW_URL = "https://m.e-boks.dk/%s"
-
 HEADERS = {'User-agent': 'Mozilla/5.0 (Linux; U;) Mobile'}
 
+# here we go, check the input and print usage if wrong arg count
+if len(sys.argv) != 2:
+    print "Usage: eboks-mailer.py <config.yaml>"
+    exit(2)
+
+# load config
+config = yaml.load(file(sys.argv[1], "r").read())
+
+# choose backend
+if "backend" not in config:
+    config["backend"] = "smtp"
+
+allowed = set(string.ascii_lowercase + string.digits + '_')
+backend_name = config["backend"]
+
+if set(backend_name) > allowed:
+    print "Invalid backend name"
+    exit(3)
+
+backend_ns = imp.load_source(backend_name, "backends/%s.py" % backend_name)
+backend = backend_ns.Backend(config)
+
+print "[*] Using backend:", backend_name
+
+# setup a session to hold cookies n' stuff
 s = requests.Session()
 s.headers.update(HEADERS)
 
@@ -64,7 +82,6 @@ if "notification warning" in r.content:
 
 print "[+] Login OK"
 
-
 r = s.get(INBOX_URL)
 r.raise_for_status()
 
@@ -78,14 +95,14 @@ for msg in msgs.select("li"):
     
     unread = len(msg.select(".item_unread")) == 1
 
-    if unread:
+    if True or unread:
 
         msgid = msg.a["href"].split("'")[1]
         date = msg.select("span.recieved")[0].text
         sender = msg.select("span.sender")[0].text
         subject = msg.select("span.title")[0].text
 
-        print "[*] Getting documents:", date, repr(sender), repr(subject)
+        print "[*] Getting documents for:", subject
 
         form = {"target": msgid, "auth": auth, "fuid": fuid}
         r = s.post(DOC_URL, data=form)
@@ -93,11 +110,9 @@ for msg in msgs.select("li"):
 
         soup = BeautifulSoup(r.content)
 
-        msg = MIMEMultipart()
-        msg['Subject'] = subject 
-        msg['From'] = config["from"] % sender
-        msg['To'] = config["to"]
-      
+        dc = backend.new_collection()
+        dc.set_metadata(subject, sender, date)
+
         for el in soup.select("form li a"):
 
             url = el["href"]
@@ -110,13 +125,7 @@ for msg in msgs.select("li"):
 
             r = s.get(DOCVIEW_URL % url)
             r.raise_for_status()
-            
-            part = MIMEBase(*mime.split("/"))
-            part.set_payload(r.content)
-            Encoders.encode_base64(part)
-            part.add_header('Content-Disposition', 'attachment; filename="%s"' % filename)
-            msg.attach(part)
+            dc.attach(filename, mime, r.content)
 
-        server = smtplib.SMTP(config["server"])
-        server.sendmail(config["from"] % sender, config["to"], msg.as_string())
+        dc.execute()
         
