@@ -48,3 +48,7 @@ And the master system config is something like (in `/etc/dovecot/dovecot.conf`)
       sieve_extensions = +vnd.dovecot.execute
       sieve_execute_bin_dir = /usr/lib/dovecot/sieve-execute
     }
+    
+License
+-------
+Creative Commons Public Domain Dedication (CC0) - https://creativecommons.org/publicdomain/zero/1.0/
