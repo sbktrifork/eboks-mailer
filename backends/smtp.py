@@ -36,5 +36,5 @@ class DocumentCollection(object):
 
     def execute(self):
         server = smtplib.SMTP(self.backend.mailserver)
-        server.sendmail(self.backend.mailfrom % sender, self.backend.mailto, self.msg.as_string())
+        server.sendmail(self.msg['From'], self.backend.mailto, self.msg.as_string())
         
