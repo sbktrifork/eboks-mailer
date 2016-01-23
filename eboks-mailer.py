@@ -102,8 +102,8 @@ for msg in msgs.select("li"):
 
         msgid = msg.a["href"].split("'")[1]
         date = msg.select("span.recieved")[0].text
-        sender = msg.select("span.sender")[0].text
-        subject = msg.select("span.title")[0].text
+        sender = msg.select("span.sender")[0].text.encode("utf8")
+        subject = msg.select("span.title")[0].text.encode("utf8")
 
         print "[*] Getting documents for:", subject
 
